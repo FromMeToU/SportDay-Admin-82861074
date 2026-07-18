@@ -1,0 +1,401 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>กีฬาสี (แยกปีการศึกษา)</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts for a friendly look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- html2canvas for exporting to JPG -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Mitr', sans-serif;
+            background-color: #FFF8E1; /* Pastel background color */
+        }
+        .leaderboard-card, .tab-btn, .modal-content {
+            transition: all 0.3s ease-in-out;
+        }
+        .tab-btn.active {
+            border-bottom-color: #F59E0B; /* amber-500 */
+            color: #D97706; /* amber-600 */
+            background-color: #FFFBEB; /* amber-50 */
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        /* Animation for modals */
+        .modal.hidden .modal-content {
+            transform: scale(0.9);
+            opacity: 0;
+        }
+        .modal .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+        .dragging {
+            opacity: 0.5;
+            background: #fef9c3;
+        }
+        .drag-over {
+            border-top: 2px solid #F59E0B;
+        }
+        .draggable-item, .draggable-group {
+            cursor: grab;
+        }
+        .draggable-item:active, .draggable-group:active {
+            cursor: grabbing;
+        }
+
+
+        /* Mobile layout fixes */
+        html, body, #app {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        #headerActions button {
+            background-color: rgba(255, 255, 255, 0.88) !important;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            box-shadow: 0 6px 18px rgba(146, 64, 14, 0.08);
+        }
+        .pending-label {
+            font-size: 11px;
+            line-height: 1;
+            padding: 0.32rem 0.42rem;
+        }
+        .pending-split-bar {
+            width: 2.25rem;
+            height: 1.7rem;
+        }
+        @media (min-width: 768px) {
+            .pending-label {
+                font-size: 0.875rem;
+                padding: 0.35rem 0.55rem;
+            }
+            .pending-split-bar {
+                width: 3.5rem;
+                height: 1.75rem;
+            }
+        }
+
+        .leaderboard-medals {
+            flex-wrap: nowrap;
+            white-space: nowrap;
+        }
+        .leaderboard-medal-pill {
+            flex: 0 0 auto;
+            white-space: nowrap;
+        }
+        .viewer-mode #headerActions,
+        .viewer-mode #admin-main-controls,
+        .viewer-mode #addSportsBtn,
+        .viewer-mode #addAthleticsBtn,
+        .viewer-mode .edit-event-btn,
+        .viewer-mode .delete-event-btn {
+            display: none !important;
+        }
+        @media (max-width: 640px) {
+            #app {
+                padding: 0.75rem;
+            }
+            header {
+                padding-top: 0.25rem;
+            }
+            #headerActions {
+                position: static !important;
+                justify-content: center;
+                margin-top: 0.75rem;
+            }
+            #headerActions button {
+                width: 2.6rem;
+                height: 2.6rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+            header h1 {
+                font-size: 2.35rem !important;
+                line-height: 1.05 !important;
+            }
+            header p {
+                font-size: 1rem !important;
+                line-height: 1.45 !important;
+            }
+            nav {
+                gap: 0.25rem;
+            }
+            .tab-btn {
+                flex: 1 1 46%;
+                font-size: 1rem !important;
+                padding: 0.65rem 0.45rem !important;
+                border-radius: 0.75rem 0.75rem 0 0;
+            }
+            .leaderboard-card {
+                padding: 0.9rem !important;
+                border-radius: 1.25rem !important;
+                gap: 0.55rem !important;
+            }
+            .leaderboard-mascot {
+                width: 3.75rem !important;
+                height: 3.75rem !important;
+                font-size: 2.15rem !important;
+            }
+            .leaderboard-team-name {
+                font-size: 1.75rem !important;
+                line-height: 1.05 !important;
+            }
+            .leaderboard-medals {
+                gap: 0.28rem !important;
+                margin-top: 0.4rem !important;
+            }
+            .leaderboard-medal-pill {
+                gap: 0.2rem !important;
+                padding: 0.32rem 0.42rem !important;
+                border-radius: 0.75rem !important;
+                min-width: 2.85rem;
+                justify-content: center;
+            }
+            .leaderboard-medal-icon {
+                font-size: 1rem !important;
+                line-height: 1 !important;
+            }
+            .leaderboard-medal-number {
+                font-size: 1.2rem !important;
+                line-height: 1 !important;
+            }
+            .leaderboard-score-box {
+                min-width: 3.35rem !important;
+            }
+            .leaderboard-score-number {
+                font-size: 2.45rem !important;
+            }
+            .leaderboard-score-label {
+                font-size: 0.82rem !important;
+                line-height: 1.05 !important;
+            }
+            .leaderboard-rank {
+                width: 2.2rem !important;
+                font-size: 2.9rem !important;
+            }
+        }
+
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <!-- Main Application Container -->
+    <div id="app" class="container mx-auto p-4 md:p-8 max-w-5xl">
+        
+        <!-- Header -->
+        <header class="text-center mb-6 relative">
+            <h1 class="text-4xl md:text-5xl font-bold text-amber-600">🏆 Sports Day Ranking 🏆</h1>
+            <p id="subtitle" class="text-lg text-gray-500 mt-2">จัดอันดับการแข่งขันกีฬาสี โรงเรียนบ้านโคกเมือง ปีการศึกษา <span id="academicYearLabel">2569</span></p>
+            <div id="headerActions" class="absolute top-0 right-0 flex items-center space-x-1">
+                <button id="notificationBtn" class="relative text-gray-500 hover:text-amber-600 p-3 rounded-full transition-colors duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-bell-fill" viewBox="0 0 16 16">
+                        <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
+                    </svg>
+                    <span id="notificationBadge" class="absolute top-1 right-1 flex items-center justify-center h-5 w-5 rounded-full bg-red-500 text-white text-xs ring-2 ring-white hidden">0</span>
+                </button>
+                <button id="settingsBtn" class="text-gray-500 hover:text-amber-600 p-3 rounded-full transition-colors duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                        <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311a1.464 1.464 0 0 1-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413-1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.858 2.929 2.929 0 0 1 0 5.858z"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="flex flex-wrap justify-center border-b-2 border-gray-200 mb-6">
+            <button data-tab="main" class="tab-btn active text-lg font-semibold py-3 px-6 border-b-4 border-transparent hover:bg-amber-50 rounded-t-lg">หน้าสรุปคะแนน</button>
+            <button data-tab="sports" class="tab-btn text-lg font-semibold py-3 px-6 border-b-4 border-transparent hover:bg-amber-50 rounded-t-lg">กีฬาประเภททีม</button>
+            <button data-tab="played" class="tab-btn text-lg font-semibold py-3 px-6 border-b-4 border-transparent hover:bg-amber-50 rounded-t-lg">รายการแข่งขันแล้ว</button>
+            <button data-tab="athletics" class="tab-btn text-lg font-semibold py-3 px-6 border-b-4 border-transparent hover:bg-amber-50 rounded-t-lg">กรีฑา</button>
+            <button data-tab="summary" id="summary-tab-btn" class="tab-btn text-lg font-semibold py-3 px-6 border-b-4 border-transparent hover:bg-amber-50 rounded-t-lg">สรุปเหรียญ</button>
+        </nav>
+
+        <!-- Admin Controls (visible only in admin mode across all tabs) -->
+        <div id="admin-main-controls" class="my-6 space-y-4 hidden">
+            <div class="bg-white/70 p-4 rounded-2xl shadow-inner max-w-3xl mx-auto">
+                <label for="academicYearInput" class="block text-center font-semibold text-gray-700 mb-2">จัดเก็บข้อมูลตามปีการศึกษา</label>
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
+                    <input id="academicYearInput" type="number" inputmode="numeric" min="2500" max="2700" class="w-full sm:w-40 p-3 border border-amber-200 rounded-xl text-center text-xl font-bold focus:ring-amber-500 focus:border-amber-500" placeholder="เช่น 2569">
+                    <button id="saveAcademicYearBtn" class="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">📚 ใช้ปีนี้</button>
+                    <button id="clearYearResultsBtn" class="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">🧽 ล้างผลเหรียญปีนี้</button>
+                    <button id="resetYearDataBtn" class="w-full sm:w-auto bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">♻️ รีเซ็ตรายการเริ่มต้น</button>
+                </div>
+                <p id="currentYearText" class="text-center text-sm text-gray-500 mt-2">กำลังใช้ปีการศึกษา 2569</p>
+            </div>
+            <div id="viewStatsBox" class="bg-white/70 p-4 rounded-2xl shadow-inner max-w-2xl mx-auto text-center">
+                <div class="text-sm font-semibold text-gray-500">👁️ ยอดเปิดหน้าเว็บคนดู</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                    <div class="bg-amber-50 border border-amber-100 rounded-2xl p-4">
+                        <div class="text-xs font-bold text-gray-500">รายวัน</div>
+                        <div id="viewTodayCountText" class="text-4xl font-extrabold text-amber-700 mt-1">0 ครั้ง</div>
+                        <div id="viewTodayDateText" class="text-xs text-gray-500 mt-1">วันนี้</div>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4">
+                        <div class="text-xs font-bold text-gray-500">สะสม</div>
+                        <div id="viewTotalCountText" class="text-4xl font-extrabold text-blue-700 mt-1">0 ครั้ง</div>
+                        <div class="text-xs text-gray-500 mt-1">รวมทุกครั้งที่เปิดไฟล์คนดู</div>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row justify-center gap-2 mt-4">
+                    <button id="clearTodayViewsBtn" class="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-5 rounded-full shadow transition-colors">🧹 ล้างยอดวันนี้</button>
+                    <button id="clearAllViewsBtn" class="w-full sm:w-auto bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-5 rounded-full shadow transition-colors">🗑️ ล้างยอดสะสม</button>
+                </div>
+                <div class="text-xs text-gray-500 mt-2">นับทุกครั้งที่เปิดไฟล์สำหรับคนดูเท่านั้น</div>
+            </div>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <button id="clearNotificationsBtn" class="w-full sm:w-auto bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">
+                    🧹 ล้างการแจ้งเตือน
+                </button>
+                <button id="toggleDisplayModeBtn" class="w-full sm:w-auto bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">
+                    🎨 สลับมุมมองเหรียญ
+                </button>
+                <button id="exportBtn" class="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">
+                    🖼️ Export เป็นรูปภาพ (JPG)
+                </button>
+            </div>
+             <div id="medal-scoring-controls" class="bg-white/60 p-4 rounded-xl max-w-lg mx-auto">
+                <label class="block text-center font-semibold text-gray-700 mb-2">วิธีการคำนวณเหรียญ (กรณีมีผู้ชนะร่วม)</label>
+                <div class="flex justify-center gap-4">
+                    <label class="flex items-center gap-2">
+                        <input type="radio" name="medalScoring" value="average" class="form-radio h-5 w-5 text-amber-600">
+                        <span>เฉลี่ยเหรียญ</span>
+                    </label>
+                    <label class="flex items-center gap-2">
+                        <input type="radio" name="medalScoring" value="full" class="form-radio h-5 w-5 text-amber-600">
+                        <span>ให้สีละ 1 เหรียญ</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Tab Content -->
+        <div id="main-tab" class="tab-content active">
+            <main id="leaderboard" class="space-y-4 relative">
+                <!-- Leaderboard cards will be dynamically inserted here -->
+            </main>
+        </div>
+
+        <div id="sports-tab" class="tab-content">
+            <div id="sports-table-container"></div>
+            <button id="addSportsBtn" class="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300 hidden">
+                ➕ เพิ่มรายการกีฬา
+            </button>
+        </div>
+
+        <div id="played-tab" class="tab-content">
+            <div id="played-sports-container"></div>
+        </div>
+
+        <div id="athletics-tab" class="tab-content">
+            <div id="athletics-table-container"></div>
+            <button id="addAthleticsBtn" class="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300 hidden">
+                ➕ เพิ่มรายการกรีฑา
+            </button>
+        </div>
+
+        <div id="summary-tab" class="tab-content">
+            <!-- Medal summary content will be injected here -->
+        </div>
+    </div>
+
+    <!-- Modals -->
+     <!-- Password Modal -->
+    <div id="passwordModal" class="modal fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center p-4 hidden z-50">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm">
+            <h2 class="text-2xl font-bold text-amber-600 mb-4">Admin Login</h2>
+            <form id="passwordForm">
+                <label for="passwordInput" class="block text-sm font-medium text-gray-700">กรุณาใส่รหัสผ่าน:</label>
+                <input type="password" id="passwordInput" class="mt-1 w-full p-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500">
+                <p id="passwordError" class="text-red-500 text-sm mt-1 hidden">รหัสผ่านไม่ถูกต้อง</p>
+                <div class="mt-6 flex justify-end gap-3">
+                    <button type="button" class="close-modal-btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-full">ยกเลิก</button>
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow-lg">เข้าสู่ระบบ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Event Modal -->
+    <div id="eventModal" class="modal fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center p-4 hidden z-50">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl p-6 w-full max-w-lg">
+            <h2 id="eventModalTitle" class="text-2xl font-bold text-amber-600 mb-4">เพิ่มรายการ</h2>
+            <form id="eventForm">
+                <input type="hidden" id="eventType">
+                <input type="hidden" id="editEventId">
+                <label for="eventNames" class="block text-sm font-medium text-gray-700">ชื่อรายการ:</label>
+                <textarea id="eventNames" rows="5" class="mt-1 w-full p-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="ตัวอย่าง:&#10;ฟุตบอล, ชาย ป.6"></textarea>
+                <p id="addEventHelp" class="text-xs text-gray-500 mt-1">* รูปแบบ: ชื่อกีฬา, รุ่น (คั่นด้วยจุลภาค) สามารถเพิ่มหลายรายการโดยขึ้นบรรทัดใหม่</p>
+                <p id="editEventHelp" class="text-xs text-gray-500 mt-1 hidden">* รูปแบบ: ชื่อกีฬา, รุ่น (คั่นด้วยจุลภาค)</p>
+                <div class="mt-6 text-center">
+                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-full shadow-lg">บันทึก</button>
+                    <button type="button" class="close-modal-btn ml-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-full">ยกเลิก</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Select Winners Modal -->
+    <div id="winnerModal" class="modal fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center p-4 hidden z-50">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md">
+            <h2 id="winnerModalTitle" class="text-2xl font-bold text-amber-600 mb-4">เลือกทีมที่ชนะ</h2>
+            <form id="winnerForm">
+                <input type="hidden" id="winnerEventType">
+                <input type="hidden" id="winnerEventId">
+                <input type="hidden" id="winnerMedalType">
+                <div id="winner-teams-checkboxes" class="grid grid-cols-2 gap-4">
+                    <!-- Winner checkboxes will be inserted here -->
+                </div>
+                <div class="mt-6 text-center">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow-lg">ยืนยัน</button>
+                    <button type="button" class="close-modal-btn ml-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-full">ยกเลิก</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center p-4 hidden z-50">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm">
+            <h2 class="text-2xl font-bold text-red-600 mb-3">ยืนยันการลบ</h2>
+            <p id="confirmModalMessage" class="text-gray-700">คุณต้องการลบรายการนี้ใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้</p>
+            <div class="mt-6 flex justify-end gap-3">
+                <button id="confirmCancelBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-full">ยกเลิก</button>
+                <button id="confirmAcceptBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-full shadow-lg">ยืนยัน</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Update Toast Notification -->
+    <div id="updateToast" class="fixed bottom-5 right-5 text-white py-3 px-6 rounded-full shadow-lg transform translate-y-20 opacity-0 transition-all duration-500 z-50">
+        🔔 มีการอัปเดตข้อมูลล่าสุด!
+    </div>
+    
+    <!-- Div for JPG Export (Dynamically populated, positioned off-screen) -->
+    <div id="exportContainer" class="fixed top-0 left-0 w-[1000px] p-10 -translate-x-[9999px]">
+        <!-- Content for export is generated here -->
+    </div>
+
+    
+
+    <script type="module" src="script.min.js"></script>
+</body>
+</html>
+
+
