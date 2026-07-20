@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>กีฬาสี (แยกปีการศึกษา)</title>
+    <title>ระบบสรุปผลการแข่งขันกีฬาสี</title>
     
     <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,7 +11,7 @@
     <!-- Google Fonts for a friendly look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- html2canvas for exporting to JPG -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -389,16 +389,657 @@
             }
         }
 
+
+        /* ===== Professional interface refresh ===== */
+        :root {
+            --app-bg: #f3f6fa;
+            --surface: #ffffff;
+            --surface-muted: #f8fafc;
+            --ink: #172033;
+            --muted: #64748b;
+            --line: #dbe3ec;
+            --primary: #17324d;
+            --primary-soft: #eaf0f6;
+            --accent: #c6972f;
+            --accent-soft: #fbf6e8;
+            --danger: #b42318;
+            --radius-lg: 22px;
+            --radius-md: 15px;
+            --shadow-sm: 0 4px 14px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 14px 34px rgba(15, 23, 42, 0.09);
+        }
+        html { background: var(--app-bg); }
+        body {
+            font-family: 'Noto Sans Thai', 'Mitr', sans-serif !important;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 10% 0%, rgba(198,151,47,.08), transparent 28rem),
+                linear-gradient(180deg, #f8fafc 0%, var(--app-bg) 100%) !important;
+            min-height: 100vh;
+        }
+        #app {
+            max-width: 1240px !important;
+            padding-top: 1.25rem !important;
+            padding-bottom: 3rem !important;
+        }
+        header {
+            text-align: left !important;
+            background: rgba(255,255,255,.96);
+            border: 1px solid var(--line);
+            border-top: 5px solid var(--primary);
+            border-radius: var(--radius-lg);
+            padding: 1.4rem 1.6rem !important;
+            box-shadow: var(--shadow-sm);
+        }
+        header h1 {
+            color: var(--primary) !important;
+            letter-spacing: -.025em;
+            font-weight: 800 !important;
+        }
+        header p { color: var(--muted) !important; }
+        #headerActions button {
+            color: var(--primary) !important;
+            border: 1px solid var(--line) !important;
+            background: var(--surface) !important;
+            box-shadow: none !important;
+        }
+        #headerActions button:hover { background: var(--primary-soft) !important; }
+
+        nav {
+            position: sticky;
+            top: .5rem;
+            z-index: 35;
+            border: 1px solid var(--line) !important;
+            border-radius: 18px;
+            background: rgba(255,255,255,.94);
+            backdrop-filter: blur(14px);
+            padding: .5rem;
+            gap: .35rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .tab-btn {
+            border: 0 !important;
+            border-radius: 12px !important;
+            color: #405069;
+            background: transparent;
+            font-weight: 700 !important;
+            transition: background .18s ease, color .18s ease, box-shadow .18s ease !important;
+        }
+        .tab-btn:hover { background: var(--primary-soft) !important; color: var(--primary) !important; }
+        .tab-btn.active {
+            color: #fff !important;
+            background: var(--primary) !important;
+            box-shadow: inset 0 -3px 0 var(--accent), 0 6px 16px rgba(23,50,77,.18);
+        }
+        .tab-content { animation: formalFade .18s ease-out; }
+        @keyframes formalFade { from { opacity: .5; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+
+        .spain-champion-banner {
+            border-radius: var(--radius-lg) !important;
+            box-shadow: var(--shadow-md) !important;
+        }
+
+        #leaderboard { gap: 1rem !important; }
+        .leaderboard-card.team-card {
+            position: relative;
+            background: var(--surface) !important;
+            border: 1px solid var(--line);
+            border-left: 8px solid var(--team-accent, var(--primary));
+            border-radius: var(--radius-lg) !important;
+            box-shadow: var(--shadow-sm) !important;
+            cursor: pointer;
+            outline: none;
+            overflow: hidden;
+            transform: translateZ(0);
+        }
+        .leaderboard-card.team-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(90deg, var(--team-tint, rgba(23,50,77,.05)), transparent 42%);
+        }
+        .leaderboard-card.team-card:hover {
+            transform: translateY(-2px);
+            border-color: #c7d2df;
+            box-shadow: var(--shadow-md) !important;
+        }
+        .leaderboard-card.team-card:focus-visible { box-shadow: 0 0 0 4px rgba(23,50,77,.18), var(--shadow-md) !important; }
+        .team-blue { --team-accent:#2f73d9; --team-tint:rgba(47,115,217,.10); }
+        .team-green { --team-accent:#1e9b64; --team-tint:rgba(30,155,100,.10); }
+        .team-yellow { --team-accent:#d69e00; --team-tint:rgba(214,158,0,.11); }
+        .team-red { --team-accent:#d64545; --team-tint:rgba(214,69,69,.10); }
+        .team-card.ring-4 { --tw-ring-shadow: 0 0 #0000 !important; }
+        .leaderboard-mascot {
+            border: 4px solid rgba(255,255,255,.9);
+            box-shadow: 0 8px 22px rgba(15,23,42,.14) !important;
+        }
+        .leaderboard-team-name { color: var(--ink) !important; }
+        .leaderboard-medal-pill {
+            background: rgba(255,255,255,.94) !important;
+            border: 1px solid var(--line);
+            box-shadow: none !important;
+        }
+        .leaderboard-score-number { color: var(--primary) !important; }
+        .leaderboard-score-label { color: var(--muted) !important; }
+        .leaderboard-rank { color: #94a3b8 !important; }
+        .team-card.ring-4 .leaderboard-rank { color: var(--accent) !important; }
+        .team-details-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            margin-top: .65rem;
+            color: var(--primary);
+            font-size: .78rem;
+            font-weight: 700;
+        }
+        .team-details-hint svg { width: 15px; height: 15px; }
+
+        #sports-table-container > div,
+        #athletics-table-container > div,
+        #played-sports-container > div,
+        #summary-tab > div {
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+        }
+        .sport-group {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .sport-group-title {
+            color: var(--primary) !important;
+            border-bottom: 1px solid var(--line) !important;
+            padding: .2rem .3rem .8rem !important;
+            margin-bottom: .2rem;
+            font-size: 1.35rem !important;
+            letter-spacing: -.015em;
+        }
+        .event-result-row,
+        .played-result-row {
+            background: var(--surface) !important;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md) !important;
+            box-shadow: none !important;
+        }
+        .sport-group .event-result-row { background: var(--surface-muted) !important; }
+        .event-result-row:hover,
+        .played-result-row:hover { border-color: #bdcad8; background: #fff !important; }
+        .played-results-panel {
+            background: var(--surface) !important;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg) !important;
+            padding: 1rem !important;
+            box-shadow: var(--shadow-sm) !important;
+        }
+        .played-results-panel h2 { color: var(--primary) !important; }
+        .edit-winner-btn, .event-result-row > div > div, .played-result-row > div > div {
+            border-radius: 12px !important;
+        }
+        .edit-event-btn, .delete-event-btn { border-radius: 10px !important; }
+
+        #admin-main-controls > div,
+        #medal-scoring-controls,
+        #viewStatsBox {
+            background: var(--surface) !important;
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow-sm) !important;
+        }
+        #admin-main-controls button,
+        #addSportsBtn,
+        #addAthleticsBtn {
+            border-radius: 12px !important;
+            transform: none !important;
+            box-shadow: none !important;
+            font-weight: 700 !important;
+        }
+        #admin-main-controls button:hover,
+        #addSportsBtn:hover,
+        #addAthleticsBtn:hover { filter: brightness(.96); transform: none !important; }
+
+        #summary-tab > div {
+            background: var(--surface) !important;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg) !important;
+            padding: 1.4rem !important;
+            box-shadow: var(--shadow-sm) !important;
+        }
+        #summary-tab h2 { color: var(--primary) !important; }
+        #summary-tab .max-w-md > div {
+            border: 1px solid var(--line);
+            border-radius: 14px !important;
+            background: var(--surface-muted) !important;
+        }
+
+        .modal { backdrop-filter: blur(6px); }
+        .modal-content {
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg) !important;
+            box-shadow: 0 30px 80px rgba(15,23,42,.24) !important;
+        }
+        input, textarea, select {
+            border-color: #cbd5e1 !important;
+            border-radius: 12px !important;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 3px rgba(23,50,77,.13) !important;
+        }
+
+        /* Team medal detail modal */
+        .team-detail-header {
+            background: linear-gradient(135deg, var(--team-detail-tint, #edf2f7), #fff);
+            border-bottom: 1px solid var(--line);
+        }
+        .team-detail-summary-card {
+            background: var(--surface-muted);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: .8rem;
+            text-align: center;
+        }
+        .team-medal-entry {
+            display: grid;
+            grid-template-columns: auto minmax(0,1fr) auto;
+            gap: .8rem;
+            align-items: center;
+            padding: .9rem;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: var(--surface);
+        }
+        .team-medal-entry + .team-medal-entry { margin-top: .55rem; }
+        .team-medal-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 3.15rem;
+            padding: .55rem .65rem;
+            border-radius: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+        .team-medal-badge.gold { background:#fff7d6; color:#8a6400; border:1px solid #ead17a; }
+        .team-medal-badge.silver { background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; }
+        .team-medal-badge.bronze { background:#fff0e5; color:#9a4c16; border:1px solid #efc19f; }
+        .team-medal-type-label {
+            color: var(--muted);
+            background: var(--surface-muted);
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: .28rem .55rem;
+            font-size: .72rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .empty-medal-state {
+            border: 1px dashed #cbd5e1;
+            border-radius: 16px;
+            background: var(--surface-muted);
+            color: var(--muted);
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        @media (max-width: 767px) {
+            #app { padding: .65rem !important; }
+            header { padding: 1.05rem !important; border-radius: 17px; }
+            header h1 { font-size: 1.75rem !important; }
+            header p { font-size: .9rem !important; }
+            nav { top: .25rem; border-radius: 14px; }
+            .tab-btn { flex: 1 1 45%; font-size: .9rem !important; padding: .65rem .4rem !important; }
+            .leaderboard-card.team-card {
+                border-left-width: 6px;
+                padding: .85rem !important;
+                gap: .45rem !important;
+            }
+            .leaderboard-mascot { width: 3.35rem !important; height: 3.35rem !important; font-size: 1.85rem !important; }
+            .leaderboard-team-name { font-size: 1.35rem !important; }
+            .leaderboard-medals { gap: .22rem !important; }
+            .leaderboard-medal-pill { min-width: 2.5rem !important; padding: .28rem .34rem !important; }
+            .leaderboard-medal-icon { font-size: .92rem !important; }
+            .leaderboard-medal-number { font-size: 1.05rem !important; }
+            .leaderboard-score-number { font-size: 2rem !important; }
+            .leaderboard-rank { width: 1.8rem !important; font-size: 2.25rem !important; }
+            .team-details-hint { font-size: .68rem; margin-top: .5rem; }
+            .sport-group { padding: .65rem; border-radius: 16px; }
+            .sport-group-title { font-size: 1.15rem !important; }
+            .event-result-row, .played-result-row { padding: .75rem !important; }
+            .team-medal-entry { grid-template-columns: auto minmax(0,1fr); }
+            .team-medal-type-label { grid-column: 2; justify-self: start; }
+        }
+
+
+        /* ===== Competition results + stronger team identity (formal v2) ===== */
+        .leaderboard-card.team-card {
+            background: linear-gradient(105deg, var(--team-bg, #f8fafc) 0%, #ffffff 72%) !important;
+            border-color: var(--team-border, var(--line)) !important;
+            border-left-width: 10px !important;
+            border-left-color: var(--team-accent, var(--primary)) !important;
+        }
+        .leaderboard-card.team-card::before {
+            background:
+                linear-gradient(90deg, var(--team-glow, rgba(23,50,77,.12)), transparent 48%),
+                linear-gradient(180deg, rgba(255,255,255,.18), transparent 55%) !important;
+        }
+        .team-blue {
+            --team-accent:#2169c7; --team-accent-dark:#174f98;
+            --team-bg:#e7f1ff; --team-border:#9fc5f3; --team-glow:rgba(33,105,199,.16);
+        }
+        .team-green {
+            --team-accent:#168558; --team-accent-dark:#116b48;
+            --team-bg:#e7f8ef; --team-border:#9bd8bb; --team-glow:rgba(22,133,88,.15);
+        }
+        .team-yellow {
+            --team-accent:#c58b00; --team-accent-dark:#8a6200;
+            --team-bg:#fff7d7; --team-border:#ead27e; --team-glow:rgba(197,139,0,.16);
+        }
+        .team-red {
+            --team-accent:#cf3f47; --team-accent-dark:#a82931;
+            --team-bg:#ffebed; --team-border:#efabb0; --team-glow:rgba(207,63,71,.15);
+        }
+        .team-card .leaderboard-team-name,
+        .team-card .leaderboard-score-number { color: var(--team-accent-dark) !important; }
+        .team-card .leaderboard-mascot {
+            outline: 3px solid color-mix(in srgb, var(--team-accent) 22%, white);
+            outline-offset: 2px;
+        }
+        .team-card .leaderboard-medal-pill {
+            background: rgba(255,255,255,.9) !important;
+            border-color: color-mix(in srgb, var(--team-accent) 22%, #dbe3ec) !important;
+        }
+
+        /* Formal competition tabs: remove the former amber/pastel appearance */
+        .sport-group {
+            border-top: 4px solid var(--primary) !important;
+            padding: 0 !important;
+            overflow: hidden;
+        }
+        .sport-group-title {
+            margin: 0 !important;
+            padding: 1rem 1.15rem !important;
+            color: var(--primary) !important;
+            background: linear-gradient(90deg, #eef3f8, #f8fafc) !important;
+            border-bottom: 1px solid var(--line) !important;
+            font-size: 1.3rem !important;
+        }
+        .sport-group > .event-result-row {
+            margin: .75rem !important;
+        }
+        .event-result-row,
+        .played-result-row {
+            border-color: #d5dee8 !important;
+            background: #fff !important;
+        }
+        .event-result-row:hover,
+        .played-result-row:hover {
+            border-color: #9fb0c3 !important;
+            background: #fbfdff !important;
+        }
+        .event-category-title,
+        .played-event-title { color: #1f2d40 !important; }
+        .event-name-separator { color: var(--primary) !important; font-weight: 800; }
+
+        .competition-medal-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: .5rem;
+        }
+        .result-slot,
+        .final-pending-box {
+            min-width: 0;
+            height: 3.35rem;
+            border-radius: 13px !important;
+            border: 1px solid #d8e1ea !important;
+            background: #f5f8fb !important;
+            overflow: hidden;
+            transition: border-color .16s ease, background .16s ease, box-shadow .16s ease;
+        }
+        button.result-slot:hover,
+        button.final-pending-box:hover {
+            border-color: #8fa2b6 !important;
+            background: #eef3f8 !important;
+            box-shadow: 0 3px 10px rgba(15,23,42,.07);
+        }
+        .pending-result-slot,
+        .final-pending-box {
+            background: linear-gradient(135deg, #eef3f8, #ffffff) !important;
+            border-color: #a7b7c8 !important;
+        }
+        .final-pending-box { grid-column: span 2 / span 2; }
+        .pending-label {
+            color: var(--primary) !important;
+            background: #ffffff !important;
+            border: 1px solid #91a4b8 !important;
+            box-shadow: none !important;
+            padding: .36rem .72rem !important;
+            font-size: .82rem !important;
+            letter-spacing: .01em;
+        }
+        .pending-split-bar {
+            width: 5.4rem !important;
+            height: 2rem !important;
+            border-radius: 9px !important;
+            border: 1px solid rgba(23,50,77,.16) !important;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.45) !important;
+        }
+        .finalist-groups-wrap {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: .42rem;
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+        .finalist-group-visual {
+            width: 4.2rem;
+            height: 2rem;
+            display: inline-flex;
+            align-items: stretch;
+            overflow: hidden;
+            flex: 0 1 4.2rem;
+            min-width: 2.7rem;
+            border-radius: 9px;
+            border: 1px solid rgba(23,50,77,.18);
+            background: #fff;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.45);
+        }
+        .finalist-group-mascots {
+            width: 4.2rem;
+            height: 2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .15rem;
+            flex: 0 1 4.2rem;
+            min-width: 2.7rem;
+            overflow: hidden;
+        }
+        .finalist-group-mascots .pending-team-chip {
+            padding: .18rem .28rem !important;
+        }
+        .finalist-versus {
+            color: #64748b;
+            font-size: .66rem;
+            line-height: 1;
+            font-weight: 900;
+            letter-spacing: .04em;
+            flex: 0 0 auto;
+        }
+        .finalist-group-empty {
+            color: #94a3b8;
+            font-size: .68rem;
+            font-weight: 700;
+            white-space: nowrap;
+            margin: auto;
+        }
+        .final-side-panel {
+            border: 1px solid #d8e1ea;
+            border-radius: 14px;
+            background: #f8fafc;
+            padding: .8rem;
+        }
+        .final-side-title {
+            font-size: .84rem;
+            font-weight: 800;
+            color: #334155;
+            margin-bottom: .55rem;
+        }
+        @media (max-width: 640px) {
+            .finalist-groups-wrap { gap: .25rem; }
+            .finalist-group-visual,
+            .finalist-group-mascots {
+                width: 3.25rem;
+                flex-basis: 3.25rem;
+                min-width: 2.35rem;
+                height: 1.72rem;
+            }
+            .finalist-versus { font-size: .58rem; }
+        }
+        .pending-team-chip {
+            border: 1px solid #d4dee8 !important;
+            background: #fff !important;
+            box-shadow: none !important;
+        }
+        .empty-result-text { color: #94a3b8; font-size: .75rem; font-weight: 600; }
+        .medal-symbol { margin-left: .55rem; font-size: 1.15rem; flex-shrink: 0; }
+
+        .played-results-panel {
+            border-top: 4px solid var(--primary) !important;
+            padding: 0 !important;
+            overflow: hidden;
+        }
+        .played-panel-header {
+            padding: 1rem 1.15rem;
+            background: linear-gradient(90deg, #eef3f8, #f8fafc);
+            border-bottom: 1px solid var(--line);
+        }
+        .played-panel-title { color: var(--primary) !important; }
+        .played-count-badge {
+            color: var(--primary);
+            background: #fff;
+            border: 1px solid #b8c6d4;
+            border-radius: 999px;
+            padding: .48rem .9rem;
+            font-size: .82rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+        .played-results-list { padding: .75rem; }
+        .played-status { color: #64748b; font-weight: 700; }
+
+        .final-manager-note {
+            background: #eef3f8;
+            border: 1px solid #b8c6d4;
+            border-radius: 14px;
+            padding: .9rem;
+            color: #334155;
+        }
+        .final-winner-select-wrap {
+            background: #f8fafc;
+            border: 1px solid #d8e1ea;
+            border-radius: 14px;
+            padding: .85rem;
+        }
+
+        @media (max-width: 767px) {
+            .leaderboard-card.team-card { border-left-width: 7px !important; }
+            .sport-group-title { font-size: 1.12rem !important; padding: .82rem .9rem !important; }
+            .sport-group > .event-result-row { margin: .55rem !important; }
+            .competition-medal-grid { gap: .35rem; }
+            .result-slot, .final-pending-box { height: 3rem; border-radius: 11px !important; }
+            .pending-label { padding: .3rem .52rem !important; font-size: .72rem !important; }
+            .pending-split-bar { width: 4.15rem !important; height: 1.72rem !important; }
+            .medal-symbol { margin-left: .35rem; font-size: 1rem; }
+            .played-panel-header { padding: .85rem .9rem; }
+            .played-results-list { padding: .55rem; }
+        }
+
+    
+
+        /* Compact, equal-width final and third-place match boxes */
+        .competition-medal-grid.competition-final-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            width: min(100%, 24rem);
+            max-width: 24rem;
+            justify-self: start;
+        }
+        .competition-medal-grid.competition-final-single-grid {
+            grid-template-columns: minmax(0, 1fr);
+            width: min(100%, 11.75rem);
+            max-width: 11.75rem;
+            justify-self: start;
+        }
+        .competition-medal-grid.competition-two-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            width: min(100%, 24rem);
+            max-width: 24rem;
+            justify-self: start;
+        }
+        .competition-final-grid .final-pending-box,
+        .competition-final-single-grid .final-pending-box {
+            grid-column: auto !important;
+            width: 100%;
+        }
+        .final-pending-box {
+            height: 3.15rem !important;
+        }
+        .final-pending-box .pending-label {
+            padding: .3rem .5rem !important;
+            font-size: .72rem !important;
+        }
+        .final-pending-box .finalist-groups-wrap {
+            gap: .2rem !important;
+        }
+        .final-pending-box .finalist-group-visual,
+        .final-pending-box .finalist-group-mascots {
+            width: 2.55rem !important;
+            flex: 0 1 2.55rem !important;
+            min-width: 1.8rem !important;
+            height: 1.72rem !important;
+            border-radius: 7px !important;
+        }
+        .final-pending-box .finalist-versus {
+            font-size: .56rem !important;
+            letter-spacing: 0 !important;
+        }
+        @media (max-width: 640px) {
+            .competition-medal-grid.competition-final-grid,
+            .competition-medal-grid.competition-two-grid {
+                width: 100%;
+                max-width: 100%;
+                gap: .35rem;
+            }
+            .competition-medal-grid.competition-final-single-grid {
+                width: min(100%, 11.5rem);
+            }
+            .final-pending-box .pending-label {
+                padding: .27rem .43rem !important;
+                font-size: .67rem !important;
+            }
+            .final-pending-box .finalist-group-visual,
+            .final-pending-box .finalist-group-mascots {
+                width: 2.25rem !important;
+                flex-basis: 2.25rem !important;
+                min-width: 1.55rem !important;
+                height: 1.62rem !important;
+            }
+        }
+
     </style>
 </head>
 <body class="antialiased text-gray-800">
 
     <!-- Main Application Container -->
-    <div id="app" class="container mx-auto p-4 md:p-8 max-w-5xl">
+    <div id="app" class="container mx-auto p-4 md:p-8 max-w-7xl">
         
         <!-- Header -->
         <header class="text-center mb-6 relative">
-            <h1 class="text-4xl md:text-5xl font-bold text-amber-600">🏆 Sports Day Ranking 🏆</h1>
+            <h1 class="text-4xl md:text-5xl font-bold text-amber-600">ระบบสรุปผลการแข่งขันกีฬาสี</h1>
             <p id="subtitle" class="text-lg text-gray-500 mt-2">จัดอันดับการแข่งขันกีฬาสี โรงเรียนบ้านโคกเมือง ปีการศึกษา <span id="academicYearLabel">2569</span></p>
             <div id="headerActions" class="absolute top-0 right-0 flex items-center space-x-1">
                 <button id="notificationBtn" class="relative text-gray-500 hover:text-amber-600 p-3 rounded-full transition-colors duration-300">
@@ -576,6 +1217,7 @@
                 <input type="hidden" id="winnerEventType">
                 <input type="hidden" id="winnerEventId">
                 <input type="hidden" id="winnerMedalType">
+                <input type="hidden" id="winnerCombinedFinal" value="false">
                 <div id="winner-teams-checkboxes" class="grid grid-cols-2 gap-4">
                     <!-- Winner checkboxes will be inserted here -->
                 </div>
@@ -599,7 +1241,28 @@
         </div>
     </div>
     
-    <!-- Update Toast Notification -->
+
+
+    <!-- Team Medal Details Modal -->
+    <div id="teamDetailsModal" class="modal fixed inset-0 bg-slate-950/55 flex justify-center items-center p-3 md:p-6 hidden z-[70]" aria-hidden="true">
+        <div class="modal-content bg-white w-full max-w-3xl max-h-[88vh] overflow-hidden flex flex-col">
+            <div id="teamDetailsHeader" class="team-detail-header p-4 md:p-6 flex items-center gap-4">
+                <div id="teamDetailsMascot" class="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center text-4xl md:text-5xl shadow-sm flex-shrink-0"></div>
+                <div class="min-w-0 flex-grow">
+                    <div class="text-xs md:text-sm font-bold tracking-wide text-slate-500">รายละเอียดเหรียญรางวัล</div>
+                    <h2 id="teamDetailsTitle" class="text-2xl md:text-3xl font-extrabold text-slate-900 truncate"></h2>
+                    <p class="text-sm text-slate-500 mt-1">รายการที่ได้รับเหรียญจากกีฬาประเภททีมและกรีฑา</p>
+                </div>
+                <button id="closeTeamDetailsBtn" type="button" class="w-10 h-10 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-600 text-2xl leading-none flex items-center justify-center flex-shrink-0" aria-label="ปิด">×</button>
+            </div>
+            <div class="p-4 md:p-6 overflow-y-auto">
+                <div id="teamDetailsSummary" class="grid grid-cols-3 gap-2 md:gap-3 mb-5"></div>
+                <div id="teamDetailsList"></div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Update Toast Notification -->
     <div id="updateToast" class="fixed bottom-5 right-5 text-white py-3 px-6 rounded-full shadow-lg transform translate-y-20 opacity-0 transition-all duration-500 z-50">
         🔔 มีการอัปเดตข้อมูลล่าสุด!
     </div>
