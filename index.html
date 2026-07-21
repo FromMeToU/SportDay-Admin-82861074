@@ -1137,6 +1137,77 @@
             }
         }
 
+
+        /* Incomplete / not-yet-played tab */
+        .incomplete-panel {
+            background: rgba(255,255,255,.96);
+            border: 1px solid #d8e2ee;
+            border-radius: 24px;
+            box-shadow: 0 14px 34px rgba(15,23,42,.08);
+            overflow: hidden;
+        }
+        .incomplete-panel-header {
+            padding: 1.25rem 1.35rem;
+            border-bottom: 1px solid #d8e2ee;
+            background: linear-gradient(135deg, #f8fafc, #eef4fb);
+        }
+        .incomplete-section-title {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:.75rem;
+            font-weight:900;
+            color:#17324d;
+            padding:.9rem 1rem;
+            background:#f8fafc;
+            border:1px solid #d8e2ee;
+            border-radius:16px;
+            margin-bottom:.65rem;
+        }
+        .incomplete-card {
+            display:grid;
+            grid-template-columns:minmax(0,1.4fr) minmax(280px,1fr) auto;
+            align-items:center;
+            gap:1rem;
+            padding:1rem 1.1rem;
+            border:1px solid #d8e2ee;
+            border-radius:18px;
+            background:#fff;
+            box-shadow:0 5px 14px rgba(15,23,42,.04);
+        }
+        .incomplete-card + .incomplete-card { margin-top:.65rem; }
+        .incomplete-event-name { font-weight:900; color:#162a42; line-height:1.35; }
+        .incomplete-event-meta { color:#64748b; font-size:.82rem; margin-top:.2rem; }
+        .incomplete-status-chip {
+            display:inline-flex; align-items:center; justify-content:center;
+            border-radius:999px; padding:.35rem .65rem; font-size:.74rem; font-weight:900;
+            white-space:nowrap; border:1px solid #cbd5e1; background:#f8fafc; color:#475569;
+        }
+        .incomplete-status-chip.started { border-color:#f6c453; background:#fff8df; color:#8a4b08; }
+        .incomplete-result-strip { display:flex; align-items:center; gap:.45rem; min-width:0; }
+        .incomplete-medal-box {
+            min-width:72px; height:42px; display:flex; align-items:center; justify-content:center; gap:.35rem;
+            border:1px solid #d8e2ee; border-radius:13px; background:#f8fafc; overflow:hidden;
+        }
+        .incomplete-color-bar { width:34px; height:22px; border-radius:7px; overflow:hidden; display:flex; }
+        .incomplete-final-box {
+            flex:1; min-width:0; height:44px; border:1px solid #bfdbfe; background:#eff6ff;
+            border-radius:13px; display:flex; align-items:center; gap:.4rem; padding:.3rem .5rem; overflow:hidden;
+        }
+        .incomplete-final-label { font-size:.7rem; font-weight:900; color:#17324d; white-space:nowrap; }
+        .incomplete-final-team { flex:1; min-width:0; height:24px; display:flex; border-radius:7px; overflow:hidden; background:#e2e8f0; }
+        .incomplete-vs { font-size:.67rem; font-weight:900; color:#64748b; }
+        .incomplete-progress { text-align:right; min-width:70px; }
+        .incomplete-progress strong { display:block; font-size:1.2rem; color:#17324d; }
+        .incomplete-progress span { font-size:.72rem; color:#64748b; }
+        @media (max-width: 820px) {
+            .incomplete-card { grid-template-columns:1fr; gap:.65rem; }
+            .incomplete-progress { text-align:left; display:flex; align-items:center; gap:.4rem; }
+            .incomplete-progress strong { font-size:1rem; }
+            .incomplete-result-strip { width:100%; }
+            .incomplete-medal-box { flex:1; min-width:0; }
+        }
+
     </style>
 </head>
 <body class="antialiased text-gray-800">
@@ -1168,6 +1239,7 @@
             <button data-tab="main" class="tab-btn active text-lg font-semibold py-3 px-6 border-b-4 border-transparent hover:bg-amber-50 rounded-t-lg">หน้าสรุปคะแนน</button>
             <button data-tab="sports" class="tab-btn text-lg font-semibold py-3 px-6 border-b-4 border-transparent hover:bg-amber-50 rounded-t-lg">กีฬาประเภททีม</button>
             <button data-tab="played" class="tab-btn text-lg font-semibold py-3 px-6 border-b-4 border-transparent hover:bg-amber-50 rounded-t-lg">รายการแข่งขันแล้ว</button>
+            <button data-tab="incomplete" class="tab-btn text-lg font-semibold py-3 px-6 border-b-4 border-transparent hover:bg-amber-50 rounded-t-lg">ยังไม่แข่งขัน/ไม่ครบ</button>
             <button data-tab="athletics" class="tab-btn text-lg font-semibold py-3 px-6 border-b-4 border-transparent hover:bg-amber-50 rounded-t-lg">กรีฑา</button>
             <button data-tab="summary" id="summary-tab-btn" class="tab-btn text-lg font-semibold py-3 px-6 border-b-4 border-transparent hover:bg-amber-50 rounded-t-lg">สรุปเหรียญ</button>
         </nav>
@@ -1205,7 +1277,7 @@
                 <div class="admin-switch-row">
                     <div class="min-w-0">
                         <div class="font-extrabold text-slate-800">เข้าโหมด Admin อัตโนมัติ</div>
-                        <div class="text-xs text-slate-500 mt-1">ข้ามหน้ากรอกรหัสเฉพาะเบราว์เซอร์และอุปกรณ์เครื่องนี้</div>
+                        <div class="text-xs text-slate-500 mt-1">บันทึกใน Firebase และมีผลกับไฟล์ Admin ทุกอุปกรณ์</div>
                     </div>
                     <label class="admin-switch" aria-label="เข้าโหมด Admin อัตโนมัติ">
                         <input id="autoAdminToggle" type="checkbox">
@@ -1295,6 +1367,10 @@
 
         <div id="played-tab" class="tab-content">
             <div id="played-sports-container"></div>
+        </div>
+
+        <div id="incomplete-tab" class="tab-content">
+            <div id="incomplete-events-container"></div>
         </div>
 
         <div id="athletics-tab" class="tab-content">
