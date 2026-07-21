@@ -629,60 +629,165 @@
             box-shadow: 0 0 0 3px rgba(23,50,77,.13) !important;
         }
 
-        /* Team medal detail modal */
+        /* Team medal detail modal — formal, grouped and easy to scan */
+        .team-detail-shell {
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 22px !important;
+            box-shadow: 0 28px 80px rgba(15,23,42,.28) !important;
+        }
         .team-detail-header {
-            background: linear-gradient(135deg, var(--team-detail-tint, #edf2f7), #fff);
-            border-bottom: 1px solid var(--line);
+            background: linear-gradient(120deg, var(--team-detail-tint, #edf2f7) 0%, #ffffff 72%);
+            border-bottom: 1px solid #d9e2ec;
+        }
+        .team-detail-kicker {
+            letter-spacing: .08em;
+            text-transform: uppercase;
         }
         .team-detail-summary-card {
-            background: var(--surface-muted);
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            padding: .8rem;
+            position: relative;
+            overflow: hidden;
+            background: #ffffff;
+            border: 1px solid #d9e2ec;
+            border-radius: 16px;
+            padding: .9rem .75rem;
             text-align: center;
+            box-shadow: 0 4px 14px rgba(15,23,42,.04);
         }
-        .team-medal-entry {
-            display: grid;
-            grid-template-columns: auto minmax(0,1fr) auto;
-            gap: .8rem;
+        .team-detail-summary-card::before {
+            content: '';
+            position: absolute;
+            inset: 0 auto 0 0;
+            width: 4px;
+            background: var(--medal-accent, #64748b);
+        }
+        .team-detail-summary-card.gold { --medal-accent:#d59b00; background:linear-gradient(135deg,#fffdf5,#fff8d9); }
+        .team-detail-summary-card.silver { --medal-accent:#7b8794; background:linear-gradient(135deg,#ffffff,#f1f5f9); }
+        .team-detail-summary-card.bronze { --medal-accent:#b9672e; background:linear-gradient(135deg,#fffdfb,#fff0e7); }
+        .medal-detail-section {
+            border: 1px solid #d9e2ec;
+            border-radius: 17px;
+            background: #ffffff;
+            overflow: hidden;
+        }
+        .medal-detail-section + .medal-detail-section { margin-top: .9rem; }
+        .medal-detail-section-header {
+            display: flex;
             align-items: center;
-            padding: .9rem;
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            background: var(--surface);
+            justify-content: space-between;
+            gap: .75rem;
+            padding: .8rem 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
         }
-        .team-medal-entry + .team-medal-entry { margin-top: .55rem; }
-        .team-medal-badge {
+        .medal-detail-section.gold .medal-detail-section-header { background:#fff9df; }
+        .medal-detail-section.silver .medal-detail-section-header { background:#f1f5f9; }
+        .medal-detail-section.bronze .medal-detail-section-header { background:#fff1e8; }
+        .medal-detail-section-title {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            min-width: 3.15rem;
-            padding: .55rem .65rem;
-            border-radius: 12px;
+            gap: .5rem;
+            color: #172b3f;
+            font-weight: 900;
+            font-size: 1rem;
+        }
+        .medal-detail-count {
+            border: 1px solid #cbd5e1;
+            background: rgba(255,255,255,.88);
+            color: #526273;
+            border-radius: 999px;
+            padding: .24rem .65rem;
+            font-size: .72rem;
             font-weight: 800;
             white-space: nowrap;
         }
-        .team-medal-badge.gold { background:#fff7d6; color:#8a6400; border:1px solid #ead17a; }
-        .team-medal-badge.silver { background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; }
-        .team-medal-badge.bronze { background:#fff0e5; color:#9a4c16; border:1px solid #efc19f; }
+        .medal-detail-row {
+            display: grid;
+            grid-template-columns: 2rem minmax(0,1fr) auto;
+            gap: .8rem;
+            align-items: center;
+            padding: .85rem 1rem;
+            background: #ffffff;
+        }
+        .medal-detail-row + .medal-detail-row { border-top: 1px solid #edf2f7; }
+        .medal-detail-index {
+            width: 1.75rem;
+            height: 1.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9px;
+            background: #eef3f8;
+            color: #526273;
+            font-size: .76rem;
+            font-weight: 900;
+        }
+        .medal-detail-event-name { color:#162a3d; font-weight:900; line-height:1.35; }
+        .medal-detail-category { color:#64748b; font-size:.84rem; margin-top:.16rem; }
         .team-medal-type-label {
-            color: var(--muted);
-            background: var(--surface-muted);
-            border: 1px solid var(--line);
+            color: #526273;
+            background: #f8fafc;
+            border: 1px solid #d9e2ec;
             border-radius: 999px;
-            padding: .28rem .55rem;
-            font-size: .72rem;
-            font-weight: 700;
+            padding: .3rem .62rem;
+            font-size: .7rem;
+            font-weight: 800;
             white-space: nowrap;
         }
         .empty-medal-state {
             border: 1px dashed #cbd5e1;
             border-radius: 16px;
-            background: var(--surface-muted);
-            color: var(--muted);
+            background: #f8fafc;
+            color: #64748b;
             text-align: center;
             padding: 2rem 1rem;
         }
+        .admin-preference-card {
+            background: #ffffff;
+            border: 1px solid #d9e2ec;
+            border-radius: 18px;
+            box-shadow: 0 8px 24px rgba(15,23,42,.06);
+        }
+        .admin-switch-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: .95rem 1rem;
+            border-radius: 14px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+        .admin-switch-row + .admin-switch-row { margin-top: .65rem; }
+        .admin-switch {
+            position: relative;
+            display: inline-flex;
+            width: 3.1rem;
+            height: 1.7rem;
+            flex: 0 0 auto;
+        }
+        .admin-switch input { opacity:0; width:0; height:0; position:absolute; }
+        .admin-switch-track {
+            position:absolute;
+            inset:0;
+            border-radius:999px;
+            background:#cbd5e1;
+            transition:.2s ease;
+            box-shadow: inset 0 0 0 1px rgba(15,23,42,.08);
+        }
+        .admin-switch-track::after {
+            content:'';
+            position:absolute;
+            width:1.3rem;
+            height:1.3rem;
+            left:.2rem;
+            top:.2rem;
+            border-radius:50%;
+            background:#fff;
+            box-shadow:0 2px 7px rgba(15,23,42,.25);
+            transition:.2s ease;
+        }
+        .admin-switch input:checked + .admin-switch-track { background:#17324d; }
+        .admin-switch input:checked + .admin-switch-track::after { transform:translateX(1.4rem); }
 
         @media (max-width: 767px) {
             #app { padding: .65rem !important; }
@@ -708,8 +813,10 @@
             .sport-group { padding: .65rem; border-radius: 16px; }
             .sport-group-title { font-size: 1.15rem !important; }
             .event-result-row, .played-result-row { padding: .75rem !important; }
-            .team-medal-entry { grid-template-columns: auto minmax(0,1fr); }
-            .team-medal-type-label { grid-column: 2; justify-self: start; }
+            .medal-detail-row { grid-template-columns: 1.75rem minmax(0,1fr); padding:.75rem; gap:.6rem; }
+            .team-medal-type-label { grid-column: 2; justify-self: start; margin-top:.18rem; }
+            .team-detail-summary-card { padding:.72rem .45rem; }
+            .admin-switch-row { align-items:flex-start; }
         }
 
 
@@ -1077,6 +1184,35 @@
                 </div>
                 <p id="currentYearText" class="text-center text-sm text-gray-500 mt-2">กำลังใช้ปีการศึกษา 2569</p>
             </div>
+            <div id="appPreferenceBox" class="admin-preference-card p-4 md:p-5 max-w-2xl mx-auto">
+                <div class="flex items-start justify-between gap-3 mb-4">
+                    <div>
+                        <h3 class="text-lg font-extrabold text-slate-800">การแสดงผลและการเข้าใช้งาน Admin</h3>
+                        <p class="text-sm text-slate-500 mt-1">ตั้งค่าหน้าหลักและวิธีเข้าโหมดผู้ดูแล</p>
+                    </div>
+                    <span class="text-xs font-bold text-slate-500 bg-slate-100 border border-slate-200 rounded-full px-3 py-1">การตั้งค่า</span>
+                </div>
+                <div class="admin-switch-row">
+                    <div class="min-w-0">
+                        <div class="font-extrabold text-slate-800">แสดงแถบเฉลิมฉลองที่หน้าหลัก</div>
+                        <div class="text-xs text-slate-500 mt-1">มีผลกับทั้งไฟล์ Admin และไฟล์คนดู</div>
+                    </div>
+                    <label class="admin-switch" aria-label="เปิดหรือปิดแถบเฉลิมฉลอง">
+                        <input id="celebrationToggle" type="checkbox" checked>
+                        <span class="admin-switch-track"></span>
+                    </label>
+                </div>
+                <div class="admin-switch-row">
+                    <div class="min-w-0">
+                        <div class="font-extrabold text-slate-800">เข้าโหมด Admin อัตโนมัติ</div>
+                        <div class="text-xs text-slate-500 mt-1">ข้ามหน้ากรอกรหัสเฉพาะเบราว์เซอร์และอุปกรณ์เครื่องนี้</div>
+                    </div>
+                    <label class="admin-switch" aria-label="เข้าโหมด Admin อัตโนมัติ">
+                        <input id="autoAdminToggle" type="checkbox">
+                        <span class="admin-switch-track"></span>
+                    </label>
+                </div>
+            </div>
             <div id="viewStatsBox" class="bg-white/70 p-4 rounded-2xl shadow-inner max-w-2xl mx-auto text-center">
                 <div class="text-sm font-semibold text-gray-500">👁️ ยอดเปิดหน้าเว็บคนดู</div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
@@ -1245,13 +1381,13 @@
 
     <!-- Team Medal Details Modal -->
     <div id="teamDetailsModal" class="modal fixed inset-0 bg-slate-950/55 flex justify-center items-center p-3 md:p-6 hidden z-[70]" aria-hidden="true">
-        <div class="modal-content bg-white w-full max-w-3xl max-h-[88vh] overflow-hidden flex flex-col">
+        <div class="modal-content team-detail-shell bg-white w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
             <div id="teamDetailsHeader" class="team-detail-header p-4 md:p-6 flex items-center gap-4">
                 <div id="teamDetailsMascot" class="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center text-4xl md:text-5xl shadow-sm flex-shrink-0"></div>
                 <div class="min-w-0 flex-grow">
-                    <div class="text-xs md:text-sm font-bold tracking-wide text-slate-500">รายละเอียดเหรียญรางวัล</div>
+                    <div class="team-detail-kicker text-xs md:text-sm font-bold text-slate-500">สรุปรายการเหรียญรางวัล</div>
                     <h2 id="teamDetailsTitle" class="text-2xl md:text-3xl font-extrabold text-slate-900 truncate"></h2>
-                    <p class="text-sm text-slate-500 mt-1">รายการที่ได้รับเหรียญจากกีฬาประเภททีมและกรีฑา</p>
+                    <p class="text-sm text-slate-500 mt-1">แยกตามประเภทเหรียญ พร้อมชื่อรายการ รุ่น และประเภทการแข่งขัน</p>
                 </div>
                 <button id="closeTeamDetailsBtn" type="button" class="w-10 h-10 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-600 text-2xl leading-none flex items-center justify-center flex-shrink-0" aria-label="ปิด">×</button>
             </div>
